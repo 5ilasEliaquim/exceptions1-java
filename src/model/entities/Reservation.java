@@ -52,9 +52,19 @@ public class Reservation {
 				
 	}
 	
-	public void updateDates(Date checkIn, Date checkOut) {
+	public String updateDates(Date checkIn, Date checkOut) {
+		
+		Date now = new Date();
+		if(checkIn.before(now)|| checkOut.after(now)) {
+			return "Erro na reserva: A data deve ser futura ";
+		} 
+		if(!checkOut.after(checkIn)) {
+			return "Erro na reserva: A data de saida deve ser depois da data de entrada";
+		}
 		this.checkIn = checkIn;
 		this.checkOut = checkOut;
+		
+		return null; //se a aplicação não der nenhum erro , a reposta sera nulo. E se retornar alguma frase é porque deu erro 
 	}
 	
 	@Override
