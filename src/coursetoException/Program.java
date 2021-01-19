@@ -6,29 +6,26 @@ import java.util.Date;
 import java.util.Scanner;
 
 import model.entities.Reservation;
+import model.exceptions.DomainExceptions;
 
 public class Program {
 
-	public static void main(String[] args) throws ParseException {
-
+	public static void main(String[] args) {
+		
+		//vamos tratar as excecoes e por isso apagamos o throw
 
 		Scanner sc = new Scanner(System.in);
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 		
-		System.out.print("Numero do quarto: ");
-		int number = sc.nextInt();
-		System.out.print("Data inicial de reserva dd/MM/yyyy: ");
-		Date checkIn = sdf.parse(sc.next());
-		System.out.print("Data final de reserva dd/MM/yyyy: ");
-		Date checkOut = sdf.parse(sc.next());
-		
-		// fazendo validação se data é posterior a outra
-		
-		// se checkout não for depois que checkin deve dar erro.
-		if(!checkOut.after(checkIn)) {
-			System.out.println("Erro na reserva: A data de saida deve ser depois da data de entrada");
-		}
-		else {
+		try {
+			
+			
+			System.out.print("Numero do quarto: ");
+			int number = sc.nextInt();
+			System.out.print("Data inicial de reserva dd/MM/yyyy: ");
+			Date checkIn = sdf.parse(sc.next());
+			System.out.print("Data final de reserva dd/MM/yyyy: ");
+			Date checkOut = sdf.parse(sc.next());
 			Reservation reservation = new Reservation(number, checkIn, checkOut);
 			System.out.println("Reservation: " + reservation);
 			
@@ -38,17 +35,20 @@ public class Program {
 			checkIn = sdf.parse(sc.next());
 			System.out.print("Data final de reserva dd/MM/yyyy: ");
 			checkOut = sdf.parse(sc.next());
-			
-			
-			// o update vai retornar uma string e essa string vai nos dizer se houve erro ou não 
-			String error = reservation.updateDates(checkIn, checkOut);
-			if(error != null) {
-				System.out.println("Erro na reserva " + error);
-			}
-			
+			reservation.updateDates(checkIn, checkOut);
 			System.out.println("Reservation: " + reservation);
-		
 		}
+	catch(ParseException e){
+		System.out.println("Formato de data invalido");
+	}
+	catch(DomainExceptions e){
+		System.out.println("Erro na reserva" + e.getMessage()); 
+		// get message pega a mensagem do metodo que tem o illegal
+	}
+	catch (RuntimeException e){
+		System.out.println("Erro inesperado");
+	}
+	
 		sc.close();
 	}
 

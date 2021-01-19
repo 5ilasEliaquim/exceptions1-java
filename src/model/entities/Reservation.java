@@ -4,6 +4,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
+import model.exceptions.DomainExceptions;
+
 public class Reservation {
 
 	private Integer roomNumber;
@@ -12,7 +14,12 @@ public class Reservation {
 	
 	private static SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 	
-	public Reservation(Integer roomNumber, Date checkIn, Date checkOut) {
+	public Reservation(Integer roomNumber, Date checkIn, Date checkOut)  throws DomainExceptions{
+		// isso é chamado de programação defensiva, pois estamos tratando antes de gerar o erro
+		
+		if(!checkOut.after(checkIn)) {
+			throw new DomainExceptions("Erro na reserva: A data de saida deve ser depois da data de entrada");
+		}
 		this.roomNumber = roomNumber;
 		this.checkIn = checkIn;
 		this.checkOut = checkOut;
@@ -52,19 +59,24 @@ public class Reservation {
 				
 	}
 	
-	public String updateDates(Date checkIn, Date checkOut) {
+	
+	// deixaremos o metodo vazio, e agora vamos lançar uma exceção  que é a Illegal, que usamos quando os argumentos
+	//são invalidos
+	
+	public void updateDates(Date checkIn, Date checkOut) throws DomainExceptions {
 		
 		Date now = new Date();
 		if(checkIn.before(now)|| checkOut.after(now)) {
-			return "Erro na reserva: A data deve ser futura ";
+			throw new DomainExceptions("Erro na reserva: A data deve ser futura ");
 		} 
 		if(!checkOut.after(checkIn)) {
-			return "Erro na reserva: A data de saida deve ser depois da data de entrada";
+			throw new DomainExceptions("Erro na reserva: A data de saida deve ser depois da data de entrada");
 		}
 		this.checkIn = checkIn;
 		this.checkOut = checkOut;
 		
-		return null; //se a aplicação não der nenhum erro , a reposta sera nulo. E se retornar alguma frase é porque deu erro 
+		// e ai no bloco principal fazemos um catch capturando esse tipo de excecao
+		
 	}
 	
 	@Override
